@@ -1,4 +1,5 @@
 require 'tty-prompt'
+require 'pry'
 
 class CommandLineInterface
 	attr_accessor :user
@@ -65,7 +66,26 @@ class CommandLineInterface
 	end
 
 	def edit_team
-		#
+		prompt = TTY::Prompt.new
+		if @user.team.count == 6
+			user_selection = prompt.select("Your team is full. Remove a Pokemon from your team?") do |menu|
+				menu.choice 'Yes', 0
+				menu.choice 'No', 1
+			end
+			if user_selection == 0
+				remove_pokemon_from_team
+			end
+		else
+			add_pokemon_to_team
+		end
+	end
+
+	def remove_pokemon_from_team
+		# Remove pokemon from team
+	end
+
+	def add_pokemon_to_team
+		# Add pokemon to team
 	end
 
 	def view_record
