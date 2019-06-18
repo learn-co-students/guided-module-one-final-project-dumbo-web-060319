@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 	has_many :pokeballs
+	has_many :battles
 	has_many :pokemons, through: :pokeballs
 
 	def catch
@@ -59,7 +60,7 @@ class User < ActiveRecord::Base
 
 
 	def all_pokemons_on_team
-		team.map {|pokeball| pokeball.pokemon.name}
+		# Pending team model
 	end
 
 	def self.new_user(name)
