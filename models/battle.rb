@@ -1,5 +1,3 @@
-require 'pry'
-
 class Battle < ActiveRecord::Base
 	has_many :users
 	has_many :pokeballs, through: :users
@@ -7,28 +5,59 @@ class Battle < ActiveRecord::Base
 	attr_reader :user, :opponent
 	attr_accessor :user_team, :opponent_team, :user_pokeball, :opponent_pokeball
 
+	# TODO Record wins/losses for users
 	def self.do_battle(user, opponent)
 		@user = user
 		@opponent = opponent
-		@user_team = @user.pokeballs(1..6)
-		@opponent_team = @opponent.pokeballs(1..6)
+		@user_team = Array.new(@user.pokeballs(1..6))
+		@opponent_team = Array.new(@opponent.pokeballs(1..6))
 		until @user_team.length == 0 or @opponent_team.length == 0 do
 			@user_pokeball = @user_team[0]
 			@opponent_pokeball = @opponent_team[0]
-			self.fight(@user_pokeball, @opponent_pokeball)
+			winner = self.fight(@user_pokeball, @opponent_pokeball)
+			self.remove_defeated_pokemon(winner)
+		end
+
+		if @user_team.length > 0
+			puts "#{@user.name} defeated #{@opponent.name}!"
+		elsif @opponent_team.length > 0
+			puts "#{@opponent.name} defeated #{@user.name}!"
 		end
 	end
 
 	def self.fight(user_pokeball, opponent_pokeball)
 		user_pokeball.hp = 5
 		opponent_pokeball.hp = 5
+		puts "\n\n"
 		puts "#{@user.name} sent out #{user_pokeball.pokemon.name}!"
 		puts "#{@opponent.name} sent out #{opponent_pokeball.pokemon.name}!"
+		puts "\n"
 		attack_order = order_roll
-		until user_pokeball_hp <= 0 or opponent_pokeball_hp <=0 do
+		until user_pokeball.hp <= 0 or opponent_pokeball.hp <=0 do
 			attacker = attack_order[0]
 			defender = attack_order[1]
-			binding.pry
+			puts "#{attacker.pokemon.name} attacked!"
+			attack_roll = self.attack
+			if attack_roll == "miss"
+				puts "#{attacker.pokemon.name} missed!"
+			elsif attack_roll == "hit"
+				puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for 1 damage!"
+				defender.hp -= 1
+			elsif attack_roll == "critical"
+				puts "It's super effective!"
+				defender.hp -= 5
+			end
+			attack_order = attack_order.reverse
+		end
+		puts "#{defender.pokemon.name} was defeated!"
+		attacker
+	end
+
+	def self.remove_defeated_pokemon(winner)
+		if @user_team.include?(winner)
+			@opponent_team.shift
+		elsif @opponent_team.include?(winner)	
+			@user_team.shift
 		end
 	end
 
