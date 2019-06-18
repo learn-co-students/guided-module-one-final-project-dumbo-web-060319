@@ -27,3 +27,10 @@ desc "Rewrites abridged _pokedex.json as ./db/seeds.json "
 task :format_json do
 	JsonFormatter.new
 end
+
+desc 'TTY-Prompt'
+task :tty do
+	require 'tty-prompt'
+	prompt = TTY::Prompt.new
+	Pry.start
+end
