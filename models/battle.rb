@@ -5,6 +5,7 @@ class Battle < ActiveRecord::Base
 	attr_reader :user, :opponent
 	attr_accessor :user_team, :opponent_team, :user_pokeball, :opponent_pokeball
 
+
 	# TODO Record wins/losses for users
 	def self.do_battle(user, opponent)
 		@user = user
@@ -20,9 +21,17 @@ class Battle < ActiveRecord::Base
 
 		if @user_team.length > 0
 			puts "#{@user.name} defeated #{@opponent.name}!"
+			record_results(@user, @opponent)
 		elsif @opponent_team.length > 0
 			puts "#{@opponent.name} defeated #{@user.name}!"
+			record_results(@opponent, @user)
 		end
+	end
+
+	def self.record_results(battle_winner, battle_loser)
+		battle_winner.wins += 1
+		battle_loser.losses += 1
+		binding.pry
 	end
 
 	def self.fight(user_pokeball, opponent_pokeball)

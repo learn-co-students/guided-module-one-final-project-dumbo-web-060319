@@ -29,6 +29,7 @@ class CommandLineInterface
 				menu.choice 'View Record', 3
 				menu.choice 'Edit Team', 4
 				menu.choice 'Catch Pokemon', 5
+				menu.choice 'Battle', 6
 				menu.choice 'Quit', 99
 			end
 			if user_selection == 1
@@ -41,6 +42,8 @@ class CommandLineInterface
 				edit_team
 			elsif user_selection == 5
 				puts catch_pokemon
+			elsif user_selection == 6
+				battle_menu
 			end
 		end
 		
@@ -48,6 +51,11 @@ class CommandLineInterface
 
 	def catch_pokemon
 		@user.catch
+	end
+
+	def battle_menu
+		opponent = User.all[rand(0..User.all.length)]
+		Battle.do_battle(@user, opponent)
 	end
 
 	def view_team
