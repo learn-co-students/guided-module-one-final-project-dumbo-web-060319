@@ -1,5 +1,4 @@
 require 'tty-prompt'
-require 'pry'
 
 class CommandLineInterface
 	attr_accessor :user
@@ -27,6 +26,7 @@ class CommandLineInterface
 				menu.choice 'View Collection', 2
 				menu.choice 'View Record', 3
 				menu.choice 'Edit Team', 4
+				menu.choice 'Catch Pokemon', 5
 				menu.choice 'Quit', 99
 			end
 
@@ -38,7 +38,19 @@ class CommandLineInterface
 				puts view_record
 			elsif user_selection == 4
 				edit_team
+			elsif user_selection == 5
+				puts catch_pokemon
 			end
+		end
+	end
+
+	def catch_pokemon
+		roll = rand(1..100)
+		if roll > 66
+			new_pokeball = @user.create_random_pokeball
+			"Congratulations! You caught #{new_pokeball.pokemon.name}."
+		else
+			"The Pokemon got away!"
 		end
 	end
 
