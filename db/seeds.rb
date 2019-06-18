@@ -21,11 +21,12 @@ def seed_users
 	end
 end
 
+# Add 6 random pokemon to each user
 def seed_pokeballs
 	Pokeball.delete_all
 	User.all.each do |u|
 		6.times do
-			new_pokeball = u.create_random_pokeball
+			new_pokeball = u.add_random_pokeball
 			u.add_pokeball_to_team(new_pokeball)
 		end
 	end
@@ -33,3 +34,4 @@ end
 
 seed_pokemon
 seed_users
+seed_pokeballs
