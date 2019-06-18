@@ -21,6 +21,7 @@ class CommandLineInterface
 	def main_menu
 		prompt = TTY::Prompt.new
 		user_selection = 0
+
 		while user_selection != 99
 			user_selection = prompt.select('Please make a selection.') do |menu|
 				menu.choice 'View Team', 1
@@ -30,7 +31,6 @@ class CommandLineInterface
 				menu.choice 'Catch Pokemon', 5
 				menu.choice 'Quit', 99
 			end
-
 			if user_selection == 1
 				view_team
 			elsif user_selection == 2
@@ -43,16 +43,11 @@ class CommandLineInterface
 				puts catch_pokemon
 			end
 		end
+		
 	end
 
 	def catch_pokemon
-		roll = rand(1..100)
-		if roll > 66
-			new_pokeball = @user.create_random_pokeball
-			"Congratulations! You caught #{new_pokeball.pokemon.name}."
-		else
-			"The Pokemon got away!"
-		end
+		@user.catch
 	end
 
 	def view_team
@@ -61,8 +56,9 @@ class CommandLineInterface
 	end
 
 	def view_collection
-		puts "You have #{user.pokeballs.length} Pokemon in your collection, including:"
-		@user.pokeballs.each {|p| puts p.pokemon.name}
+		user_collection = @user.view_pokemons_in_collection
+		puts "You have #{user_collection.length} Pokemon in your collection:"
+		puts user_collection
 	end
 
 	def edit_team

@@ -21,5 +21,9 @@ def seed_users
 	end
 end
 
+def seed_pokeballs
+	Pokeball.delete_all
+	User.all.each do |u|
+
 seed_pokemon
 seed_users
