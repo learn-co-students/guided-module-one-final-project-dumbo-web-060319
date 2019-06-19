@@ -30,9 +30,9 @@ task :format_json do
 	JsonFormatter.new
 end
 
-desc "tty prompt test"
+desc 'TTY-Prompt'
 task :tty do
-	prompt = TTY::Prompt.new 
-	user = User.all.last 
+	require 'tty-prompt'
+	prompt = TTY::Prompt.new
 	Pry.start
 end

@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 	end
 
 	def not_on_team
-		pokeballs.where(on_team: false || nil)
+		pokeballs.where(on_team: false) || pokeballs.where(on_team: nil)
 	end		
 
 	def team_size
@@ -46,7 +46,7 @@ class User < ActiveRecord::Base
 		end
 	end
 
-	def remove_pokeball_from_team(pokeball=get_team.last)
+	def remove_pokeball_from_team(pokeball)
 		pokeball.on_team = false
 		pokeball.save
 	end
@@ -61,11 +61,6 @@ class User < ActiveRecord::Base
 
 	def view_pokemons_in_collection
 		all_pokemons_in_collection.map {|p| p.pokemon.name}
-	end
-
-
-	def all_pokemons_on_team
-		# Pending team model
 	end
 
 	def self.new_user(name)
