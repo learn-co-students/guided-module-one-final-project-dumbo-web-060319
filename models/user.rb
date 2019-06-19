@@ -4,15 +4,15 @@ class User < ActiveRecord::Base
 	has_many :pokemons, through: :pokeballs
 
 	def catch
-		wild_pokemon = Pokemon.find_by(id: rand(1 .. Pokemon.all.length))
+		wild_pokemon = Pokemon.find_by(id: rand(Pokemon.first_pokemon_id .. Pokemon.last_pokemon_id))
 		puts "A wild #{wild_pokemon.name} appeared!"
 		roll = rand(1 .. 100)
 		if roll > 66
-			puts "Congratulations! You caught #{wild_pokemon.name}."
+			puts "Congratulations! You caught #{wild_pokemon.name}.".green
 			new_pokeball = self.add_pokeball(wild_pokemon.id)
 			add_pokeball_to_team(new_pokeball)
 		else
-			puts "#{wild_pokemon.name} got away."
+			puts "#{wild_pokemon.name} got away.".red
 		end
 	end
 
@@ -21,8 +21,8 @@ class User < ActiveRecord::Base
 	end
 
 	def add_random_pokeball
-		new_pokeball = Pokeball.create(user_id: self.id, pokemon_id: rand(1 .. Pokemon.all.length))
-	end
+        new_pokeball = Pokeball.create(user_id: self.id, pokemon_id: rand(Pokemon.first_pokemon_id .. Pokemon.last_pokemon_id))
+    end
 
 	def team
 		pokeballs.where(on_team: true)

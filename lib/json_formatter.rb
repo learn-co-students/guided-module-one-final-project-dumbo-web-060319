@@ -8,10 +8,8 @@ class JsonFormatter
 		.each {|j| j['type'] = j['type'].first}
 		.each {|j| j['element_type'] = j.delete('type')}
 		.each {|j| j['name'] = j['name']['english']}
-		.each {|j| j.delete('base')}
-
 		File.open(file_to_write, 'w') do |f|
-			f.write(@pokedex.to_json)
+			f.write(pokedex.to_json)
 		end
 	end
 

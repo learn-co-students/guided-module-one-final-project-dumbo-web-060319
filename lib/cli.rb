@@ -1,5 +1,6 @@
 require 'tty-prompt'
 require 'pry'
+require 'colorize'
 
 class CommandLineInterface
 	attr_accessor :user
@@ -95,10 +96,12 @@ class CommandLineInterface
 			menu.choice 'Exit Menu', 99
 				case menu_option 
 				when 1
-					if @user.team.count < 6
+					if @user.team.count < 6 && @user.not_on_team != []
 						add_pokemon_to_team
-					else 
+					elsif @user.team.count == 6
 						puts "Your team is full!"
+					else 
+						puts "No Pokemon to add!"
 					end
 				when 2
 					if @user.team.count == 0
