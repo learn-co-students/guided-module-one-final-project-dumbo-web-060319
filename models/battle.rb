@@ -30,6 +30,8 @@ class Battle < ActiveRecord::Base
 	def self.record_results(battle_winner, battle_loser)
 		battle_winner.wins += 1
 		battle_loser.losses += 1
+		battle_winner.save
+		battle_loser.save
 		Battle.create(user_id: @user.id, opponent_id: @opponent.id, winner: battle_winner.id)
 	end
 
