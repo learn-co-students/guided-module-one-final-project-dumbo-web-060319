@@ -2,6 +2,7 @@ require_relative '../models/pokemon.rb'
 require_relative '../models/user.rb'
 require 'json'
 require 'faker'
+require 'pry'
 
 # Seed pokemons table with pokedex data
 # This will not change

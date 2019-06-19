@@ -9,7 +9,8 @@ class User < ActiveRecord::Base
 		roll = rand(1 .. 100)
 		if roll > 66
 			puts "Congratulations! You caught #{wild_pokemon.name}."
-			add_pokeball(wild_pokemon.id)
+			new_pokeball = self.add_pokeball(wild_pokemon.id)
+			add_pokeball_to_team(new_pokeball)
 		else
 			puts "#{wild_pokemon.name} got away."
 		end
@@ -26,6 +27,10 @@ class User < ActiveRecord::Base
 	def team
 		pokeballs.where(on_team: true)
 	end
+
+	def not_on_team
+		pokeballs.where(on_team: false || nil)
+	end		
 
 	def team_size
 		team.count
