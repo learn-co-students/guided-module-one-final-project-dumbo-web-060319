@@ -1,7 +1,8 @@
 require 'json'
+require 'pry'
 
 class JsonFormatter
-	def initialize(file_to_read = '_pokedex.json', file_to_write = './db/seeds.json')
+	def initialize(file_to_read = 'lib/_pokedex.json', file_to_write = 'db/seeds.json')
 		json = JSON.load File.open file_to_read
 		
 		pokedex = json.select {|j| j['id'] < 152}
@@ -14,3 +15,4 @@ class JsonFormatter
 	end
 
 end
+

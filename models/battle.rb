@@ -133,84 +133,26 @@ class Battle < ActiveRecord::Base
 	end 
 
 
-# 	Fir	Wat	Gra	Ele	Ice	Psy	Nor	Fgt	Fly	Gro	Rck	Bug	Poi	Gho	Drg
-# Special attacks:
-# Fire	0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5
-# Water	2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5
-# Grass	0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5
-# Electric	1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5
-# Ice	1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2
-# Psychic	1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1
-# Physical attacks:
-# Normal	1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1
-# Fighting	1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1
-# Flying	1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1
-# Ground	2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1
-# Rock	2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1
-# Bug	0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1
-# Poison	1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1
-# Ghost	1	1	1	1	1	0	0	1	1	1	1	1	1	2	1
-# Dragon	?	?	?	?	?	?	?	?	?	?	?	?	?	?	?
+advantage_table = 
 
-# $type_advantage_hash = {
+{
 
-#   special_attacks:
-#     {Fire:	"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
-#     Water:	"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
-#     Grass:	"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
-#     Electric:	"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
-#     Ice:	"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
-#     Psychic:	"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1"
-#     },
+	"fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+    "water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+    "grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+    "electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+    "ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+    "psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+    "normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+    "fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+    "flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+    "ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+    "rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"
 
-#   physical_attacks:
-#     {Normal:	"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
-#     Fighting:	"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
-#     Flying:	"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
-#     Ground:	"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
-#     Rock:	"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
-#     Bug:	"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
-#     Poison:	"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-#     Ghost:	"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-#     Dragon:	"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
-#     }
-# }
-
-# $type_advantage_hash = {
-# 	Fire:	"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
-#     Water:	"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
-#     Grass:	"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
-#     Electric:	"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
-#     Ice:	"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
-#     Psychic:	"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
-#     Normal:	"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
-#     Fighting:	"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
-#     Flying:	"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
-#     Ground:	"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
-#     Rock:	"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
-#     Bug:	"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
-#     Poison:	"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-#     Ghost:	"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-#     Dragon:	"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
-# }
-
-$type_advantage_hash = 
-	{
-	Fire:	%w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
-    Water:	%w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
-    Grass:	%w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
-    Electric:	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
-    Ice:	%w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
-    Psychic:	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
-    Normal:	%w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
-    Fighting:	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
-    Flying:	%w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
-    Ground:	%w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
-    Rock:	%w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
-    Bug:	%w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
-    Poison:	%w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-    Ghost:	%w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-    Dragon:	%w"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
 }
 
 $types = %w"Fire Water Grass Electic	Ice	Psychic	Normal Fighting	Flying Ground Rock Bug Poison Ghost	Dragon"
@@ -251,5 +193,6 @@ $types = %w"Fire Water Grass Electic	Ice	Psychic	Normal Fighting	Flying Ground R
 	# 	new_hash
 	# 	binding.pry
   	# end
+advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
 
 end
