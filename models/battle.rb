@@ -130,31 +130,32 @@ class Battle < ActiveRecord::Base
 
 	def self.cirtical_hit?(attacker)
 
-	end 
+	end
 
+	def self.advantage_frame(attacker_type, defender_type)
+		attacker_type = attacker_type.to_sym
+		defender_type = defender_type.to_sym
 
-advantage_table = 
+		advantage_table = {
 
-{
+		"fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+	    "water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+	    "grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+	    "electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+	    "ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+	    "psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+	    "normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+	    "fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+	    "flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+	    "ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+	    "rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+	    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+	    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+	    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"}
 
-	"fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
-    "water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
-    "grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
-    "electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
-    "ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
-    "psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
-    "normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
-    "fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
-    "flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
-    "ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
-    "rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
-    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
-    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"
-
-}
-
-advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
+		advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
+		advantage_frame[attacker_type][defender_type].to_f
+	end
 
 end
