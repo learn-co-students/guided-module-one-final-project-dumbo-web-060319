@@ -1,4 +1,4 @@
 class Pokeball < ActiveRecord::Base
-    belongs_to :pokemons 
-    belongs_to :users
+	belongs_to :user
+	belongs_to :pokemon
 end
