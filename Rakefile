@@ -36,3 +36,24 @@ task :tty do
 	prompt = TTY::Prompt.new
 	Pry.start
 end
+
+desc 'Battle Tester'
+task :damage_calc do 
+	pokemon1 = Pokemon.first 
+	pokemon2 = Pokemon.last 
+	squirtle = Pokemon.find_by(name: "Squirtle")
+	bulbasaur = Pokemon.find_by(name: "Bulbasaur")
+
+	stat_difference = (pokemon1.attack / pokemon2.defense)
+	rando = Battle.rando255
+
+	binding.pry
+end 
+
+desc 'type parser test'
+task :parser_test do
+	pokemon1 = Pokemon.first 
+	pokemon2 = Pokemon.last
+
+	Battle.parser
+end

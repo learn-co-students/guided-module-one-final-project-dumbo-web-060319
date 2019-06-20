@@ -13,10 +13,10 @@ def seed_pokemon
 		pokemon_hash = {}
 		pokemon_hash[:name] = s["name"]
 		pokemon_hash[:element_type] = s["element_type"]
-		pokemon_hash[:hp] = s["base"]["HP"]
-		pokemon_hash[:attack] = s["base"]["Attack"] 
-		pokemon_hash[:defense] = s["base"]["Defense"]
-		pokemon_hash[:speed] = s["base"]["Speed"]
+		pokemon_hash[:hp] = s["base"]["HP"].to_f
+		pokemon_hash[:attack] = s["base"]["Attack"].to_f 
+		pokemon_hash[:defense] = s["base"]["Defense"].to_f
+		pokemon_hash[:speed] = s["base"]["Speed"].to_f
 		Pokemon.create(pokemon_hash)
 	end
 end

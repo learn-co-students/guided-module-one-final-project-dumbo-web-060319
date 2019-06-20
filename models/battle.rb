@@ -5,6 +5,7 @@ class Battle < ActiveRecord::Base
 	attr_reader :user, :opponent
 	attr_accessor :user_team, :opponent_team, :user_pokeball, :opponent_pokeball
 
+
 	def self.do_battle(user, opponent)
 		@user = user
 		@opponent = opponent
@@ -83,6 +84,27 @@ class Battle < ActiveRecord::Base
 		end
 	end
 
+	#Damage = ((((2 * Level / 5 + 2) * AttackStat * AttackPower / DefenseStat) / 50) + 2) 
+	#		  		* STAB * Weakness/Resistance * RandomNumber / 100
+
+	#Actually it's ((2A/5+2)*B*C)/D)/50)+2)*X)*Y/10)*Z)/255
+	#  ((((2 * 50)/5)+2) * attacker.attack * 60)/defender.defense)/50)+2)*(type_modifier/10)*(rando_between_217_and_255))/255
+	# A = attacker's Level
+	# B = attacker's Attack or Special
+	# C = attack Power
+	# D = defender's Defense or Special
+	# X = same-Type attack bonus (1 or 1.5)
+	# Y = Type modifiers (40, 20, 10, 5, 2.5, or 0) // 4, 2, 1, .5, .25, 0 // with dual types considered
+	# 20, 10, 5, 0 // 2, 1, .5, 0 // single type// Super, Normal, Not very, Immune
+	# Z = a random number between 217 and 255
+
+
+	#modified damage calculation 
+	#Damage = ((Attack / Defense) / 50) * Weakness * RandomNumber / 100 )
+	def self.damage_calc(attacker, defender)
+		(((((((((2 * 50)/5)+2) * attacker.attack * 60)/defender.defense)/50)+2)*(1)*(Battle.rando255))/255).round
+	end
+
 	def self.attack
 		roll = rand(0 .. 100)
 		if roll < 30
@@ -93,4 +115,141 @@ class Battle < ActiveRecord::Base
 			"hit"
 		end
 	end
+
+	def self.rando255
+		rand(217..255)
+	end
+
+	def self.crit_rando
+		rand(0..255)
+	end 
+
+	def self.rando100
+		(rand(1..100).to_f / 100)
+	end 
+
+	def self.cirtical_hit?(attacker)
+
+	end 
+
+
+# 	Fir	Wat	Gra	Ele	Ice	Psy	Nor	Fgt	Fly	Gro	Rck	Bug	Poi	Gho	Drg
+# Special attacks:
+# Fire	0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5
+# Water	2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5
+# Grass	0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5
+# Electric	1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5
+# Ice	1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2
+# Psychic	1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1
+# Physical attacks:
+# Normal	1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1
+# Fighting	1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1
+# Flying	1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1
+# Ground	2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1
+# Rock	2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1
+# Bug	0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1
+# Poison	1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1
+# Ghost	1	1	1	1	1	0	0	1	1	1	1	1	1	2	1
+# Dragon	?	?	?	?	?	?	?	?	?	?	?	?	?	?	?
+
+# $type_advantage_hash = {
+
+#   special_attacks:
+#     {Fire:	"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+#     Water:	"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+#     Grass:	"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+#     Electric:	"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+#     Ice:	"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+#     Psychic:	"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1"
+#     },
+
+#   physical_attacks:
+#     {Normal:	"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+#     Fighting:	"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+#     Flying:	"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+#     Ground:	"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+#     Rock:	"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+#     Bug:	"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+#     Poison:	"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+#     Ghost:	"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+#     Dragon:	"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
+#     }
+# }
+
+# $type_advantage_hash = {
+# 	Fire:	"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+#     Water:	"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+#     Grass:	"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+#     Electric:	"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+#     Ice:	"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+#     Psychic:	"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+#     Normal:	"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+#     Fighting:	"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+#     Flying:	"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+#     Ground:	"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+#     Rock:	"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+#     Bug:	"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+#     Poison:	"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+#     Ghost:	"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+#     Dragon:	"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
+# }
+
+$type_advantage_hash = 
+	{
+	Fire:	%w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+    Water:	%w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+    Grass:	%w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+    Electric:	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+    Ice:	%w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+    Psychic:	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+    Normal:	%w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+    Fighting:	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+    Flying:	%w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+    Ground:	%w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+    Rock:	%w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+    Bug:	%w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+    Poison:	%w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+    Ghost:	%w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+    Dragon:	%w"?	?	?	?	?	?	?	?	?	?	?	?	?	?	?"
+}
+
+$types = %w"Fire Water Grass Electic	Ice	Psychic	Normal Fighting	Flying Ground Rock Bug Poison Ghost	Dragon"
+
+# {
+#   special_attacks:
+#     {Fire:	"Grass Bug",
+#     Water:	"Fire Ground Rock",
+#     Grass:	"Water Ground Rock",
+#     Electric:	"Water Flying",
+#     Ice: "Flying Ground Grass Dragon",
+#     Psychic: "Fighting Poison"
+#     },
+
+#   physical_attacks:
+#     {Normal:	"",
+#     Fighting:	"Normal Rock Ice",
+#     Flying:	"Fighting Bug Grass",
+#     Ground:	"Poison Rock Fire Electric",
+#     Rock:	"",
+#     Bug:	"",
+#     Poison:	"",
+#     Ghost:	"",
+#     Dragon:	""
+#     }
+# }
+
+	def self.parser
+		new_hash = {}
+		$type_advantage_hash.each do |type, values|
+			values.each do |value|
+				$types.each do |type_key|
+					new_hash[type] = type_key
+					new_hash[type][type_key] = value
+				end
+			end
+		end
+		new_hash
+		binding.pry
+  	end
+
 end
