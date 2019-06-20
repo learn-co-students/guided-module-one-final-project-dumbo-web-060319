@@ -1,2 +1,4 @@
-require_relative 'config/environment'
+require './config/environment'
+require './lib/cli'
 
+cli = CommandLineInterface.new
