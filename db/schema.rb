@@ -29,11 +29,11 @@ ActiveRecord::Schema.define(version: 20190619205121) do
   create_table "pokemons", force: :cascade do |t|
     t.string  "name"
     t.string  "element_type"
-    t.string  "ascii"
     t.integer "hp"
     t.float   "attack"
     t.float   "defense"
     t.float   "speed"
+    t.string  "ascii"
   end
 
   create_table "users", force: :cascade do |t|
