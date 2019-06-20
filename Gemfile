@@ -15,3 +15,4 @@ gem "database_cleaner"
 gem 'sinatra-activerecord', :require => 'active_record'
 gem 'faker'
 gem 'daru'
+gem 'colorize'

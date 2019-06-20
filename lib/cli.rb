@@ -1,5 +1,6 @@
 require 'tty-prompt'
 require 'pry'
+require 'colorize'
 
 class CommandLineInterface
 	attr_accessor :user
@@ -83,20 +84,6 @@ class CommandLineInterface
 			end
 		else 
 			edit_team_menu
-			# while menu_choice != 99
-			# 	menu_choice = prompt.select("Please choose an option:") do |menu|
-			# 	menu.choice 'Add', 0
-			# 	menu.choice 'Remove', 1
-			# 	menu.choice 'Exit Menu', 99
-
-			# 		case menu_choice 
-			# 		when 0
-			# 			add_pokemon_to_team
-			# 		when 1
-			# 			remove_pokemon_from_team
-			# 		end 
-			# 	end
-			# end 
 		end
 	end
 
@@ -109,10 +96,12 @@ class CommandLineInterface
 			menu.choice 'Exit Menu', 99
 				case menu_option 
 				when 1
-					if @user.team.count < 6
+					if @user.team.count < 6 && @user.not_on_team != []
 						add_pokemon_to_team
-					else 
+					elsif @user.team.count == 6
 						puts "Your team is full!"
+					else 
+						puts "No Pokemon to add!"
 					end
 				when 2
 					if @user.team.count == 0
@@ -128,7 +117,7 @@ class CommandLineInterface
 	def remove_pokemon_from_team
 		user_selection = $prompt.select("Select the pokemon you want to remove.") do |menu|
 			user.team.each do |pokeball|
-			menu.choice "#{pokeball.pokemon.name}", -> {user.remove_pokeball_from_team(pokeball)} 
+				menu.choice "#{pokeball.pokemon.name}", -> {user.remove_pokeball_from_team(pokeball)} 
 			end
 		end
 	end
@@ -136,7 +125,7 @@ class CommandLineInterface
 	def add_pokemon_to_team
 		user_selection = $prompt.select("Select the pokemon you want to add.") do |menu|
 			user.not_on_team.each do |pokeball|
-			menu.choice "#{pokeball.pokemon.name}", -> {user.add_pokeball_to_team(pokeball)} 
+				menu.choice "#{pokeball.pokemon.name}", -> {user.add_pokeball_to_team(pokeball)} 
 			end
 		end
 	end

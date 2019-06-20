@@ -24,8 +24,5 @@ advantage_table =
 }
 
 advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
-binding.pry
-
-def calculate_advantage
 
 0
