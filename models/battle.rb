@@ -37,8 +37,8 @@ class Battle < ActiveRecord::Base
 	end
 
 	def self.fight(user_pokeball, opponent_pokeball)
-		user_pokeball.hp = 5
-		opponent_pokeball.hp = 5
+		user_pokeball.hp = user_pokeball.pokemon.hp
+		opponent_pokeball.hp = opponent_pokeball.pokemon.hp
 		puts "\n\n"
 		sleep 1
 		puts "#{@user.name} sent out #{user_pokeball.pokemon.name}!"
@@ -55,15 +55,30 @@ class Battle < ActiveRecord::Base
 			attacker = attack_order[0]
 			defender = attack_order[1]
 			puts "#{attacker.pokemon.name} attacked!"
-			attack_roll = self.attack
+			attack_roll = self.attack_accuracy
 			if attack_roll == "miss"
 				puts "#{attacker.pokemon.name} missed!"
 			elsif attack_roll == "hit"
-				puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for 1 damage!"
-				defender.hp -= 1
+				damage = self.damage_calc(user_pokeball.pokemon, opponent_pokeball.pokemon)
+				type_advantage = self.type_advantage(attacker.pokemon, defender.pokemon)
+				case type_advantage
+				when 0
+					puts "#{defender.pokemon.name} is immune to #{attacker.pokemon.element_type} attacks!"
+				when 0.5
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage..."
+					puts "It's not very effective.."
+				when 1.0
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!"
+				when 2.0
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!"
+					puts "It's super effective!!!"
+				end 
+				defender.hp -= damage
 			elsif attack_roll == "critical"
-				puts "It's super effective!"
-				defender.hp -= 5
+				critical_hit = self.damage_critical(user_pokeball.pokemon, opponent_pokeball.pokemon)
+				puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!!".colorize :yellow
+				puts "Critical hit!!".colorize :yellow
+				defender.hp -= critical_hit
 			end
 			attack_order = attack_order.reverse
 			sleep 0.5
@@ -107,10 +122,14 @@ class Battle < ActiveRecord::Base
 	#modified damage calculation 
 	#Damage = ((Attack / Defense) / 50) * Weakness * RandomNumber / 100 )
 	def self.damage_calc(attacker, defender)
-		(((((((((2 * 50)/5)+2) * attacker.attack * 60)/defender.defense)/50)+2)*(1)*(Battle.rando255))/255).round
+		(((((((((2 * 50)/5)+2) * attacker.attack * 65)/defender.defense)/50)+2)*(self.type_advantage(attacker, defender))*(Battle.rando255))/255).round
 	end
 
-	def self.attack
+	def self.damage_critical(attacker, defender)
+		(((((((((2 * (50 * 2))/5)+2) * attacker.attack * 60)/defender.defense)/50)+2)*(self.type_advantage(attacker, defender))*(Battle.rando255))/255).round
+	end
+
+	def self.attack_accuracy
 		roll = rand(0 .. 100)
 		if roll < 30
 			"miss"
@@ -157,31 +176,39 @@ class Battle < ActiveRecord::Base
 	    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
 	    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
 	    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"}
+	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 2"}
 
 		advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
 		binding.pry
 		advantage_frame[attacker_type][defender_type].to_f
 	end
 
+
+	##########################################################################
+
+	def self.type_advantage(attacker, defender)
+		Battle.dataframe[attacker.element_type.to_sym][defender.element_type.to_sym].to_f
+	end 
+
 	def self.dataframe 
 	advantage_table = {
 
-		"fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
-	    "water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
-	    "grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
-	    "electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
-	    "ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
-	    "psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
-	    "normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
-	    "fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
-	    "flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
-	    "ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
-	    "rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
-	    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
-	    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-	    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
-	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"}
+		"Fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+	    "Water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+	    "Grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+	    "Electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+	    "Ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+	    "Psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+	    "Normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+	    "Fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+	    "Flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+	    "Ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+	    "Rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+	    "Bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+	    "Poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+	    "Ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+		"Dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 2"
+	}
 
 		advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
 	
