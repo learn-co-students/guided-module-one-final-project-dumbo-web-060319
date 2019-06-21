@@ -42,7 +42,12 @@ class Battle < ActiveRecord::Base
 		puts "\n\n"
 		sleep 1
 		puts "#{@user.name} sent out #{user_pokeball.pokemon.name}!"
+		puts "#{user_pokeball.pokemon.ascii_color}"
+		sleep 1
 		puts "#{@opponent.name} sent out #{opponent_pokeball.pokemon.name}!"
+		puts "#{opponent_pokeball.pokemon.ascii_color}"
+		sleep 1
+		puts
 		puts "\n"
 		sleep 1
 		attack_order = order_roll
@@ -155,7 +160,34 @@ class Battle < ActiveRecord::Base
 	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"}
 
 		advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
+		binding.pry
 		advantage_frame[attacker_type][defender_type].to_f
 	end
 
+	def self.dataframe 
+	advantage_table = {
+
+		"fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
+	    "water":	 %w"2	0.5	0.5	1	1	1	1	1	1	2	2	1	1	1	0.5",
+	    "grass":	 %w"0.5	2	0.5	1	1	1	1	1	0.5	2	2	0.5	0.5	1	0.5",
+	    "electric":    	%w"1	2	0.5	0.5	1	1	1	1	2	0	1	1	1	1	0.5",
+	    "ice":	   %w"1	0.5	2	1	0.5	1	1	1	2	2	1	1	1	1	2",
+	    "psychic":    	%w"1	1	1	1	1	0.5	1	2	1	1	1	1	2	1	1",
+	    "normal":	    %w"1	1	1	1	1	1	1	1	1	1	0.5	1	1	0	1",
+	    "fighting":    	%w"1	1	1	1	2	0.5	2	1	0.5	1	2	0.5	0.5	0	1",
+	    "flying":	    %w"1	1	2	0.5	1	1	1	2	1	1	0.5	2	1	1	1",
+	    "ground":	    %w"2	1	0.5	2	1	1	1	1	0	1	2	0.5	2	1	1",
+	    "rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
+	    "bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
+	    "poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
+	    "ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+	    "dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1"}
+
+		advantage_frame = Daru::DataFrame.new(advantage_table, index: advantage_table.keys)
+	
+	end
 end
+
+# while true
+# 	Pokemon.all.each { |p| puts p.ascii sleep 1 } 
+# end

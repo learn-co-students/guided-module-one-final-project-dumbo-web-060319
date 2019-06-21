@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 	end
 
 	def not_on_team
-		pokeballs.where(on_team: false) || pokeballs.where(on_team: nil)
+		pokeballs.where(on_team: false) && pokeballs.where(on_team: nil)
 	end		
 
 	def team_size
@@ -61,6 +61,10 @@ class User < ActiveRecord::Base
 
 	def view_pokemons_in_collection
 		all_pokemons_in_collection.map {|p| p.pokemon.name}
+	end
+
+	def view_pokeball
+		
 	end
 
 	def self.new_user(name)

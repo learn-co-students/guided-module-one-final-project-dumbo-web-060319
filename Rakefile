@@ -43,11 +43,3 @@ task :damage_calc do
 
 	binding.pry
 end 
-
-desc 'type parser test'
-task :parser_test do
-	pokemon1 = Pokemon.first 
-	pokemon2 = Pokemon.last
-
-	Battle.parser
-end

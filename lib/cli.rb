@@ -27,11 +27,11 @@ class CommandLineInterface
 
 		while user_selection != 99
 			user_selection = prompt.select('Please make a selection.') do |menu|
+				menu.choice 'Catch Pokemon', 5
 				menu.choice 'View Team', 1
 				menu.choice 'View Collection', 2
 				menu.choice 'View Record', 3
 				menu.choice 'Edit Team', 4
-				menu.choice 'Catch Pokemon', 5
 				menu.choice 'Battle', 6
 				menu.choice 'Quit', 99
 			end
@@ -62,8 +62,16 @@ class CommandLineInterface
 	end
 
 	def view_team
-		puts "Your current team is:"
-		@user.team.each {|pokeball| puts pokeball.pokemon.name}
+		# menu_option = 0
+		# while menu_option != 99
+			user_selection = $prompt.select("Your current team is:") do |menu|
+				user.team.each do |pokeball|
+					menu.choice "#{pokeball.pokemon.name}", -> {pokeball.view_stats_page(pokeball)}			
+				end
+			end
+		# end 
+		# puts "Your current team is:"
+		# @user.team.each {|pokeball| puts pokeball.pokemon.name}
 	end
 
 	def view_collection
