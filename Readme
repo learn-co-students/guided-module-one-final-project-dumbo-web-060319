@@ -1,0 +1,18 @@
+MOD 1 Project
+
+1.Create a User class
+2. Create a Stocks class
+3. Create joint class for User class and Stocks class (WatchList)
+4. Create a RakeFile / Environment
+5. Create a data base for User class
+6. Create a data base for Stocks class
+7. Create a Joint table
+8. Create a Run file
+9. Test and make sure everything is connected and working
+10. Add an API for live stocks prices using https://financialmodelingprep.com/api/v3/stock/real-time-price  in Stock Class
+11. Create search method for stock class so he can choose what stock to add on his list
+12. Create method to users in user class
+13. Create  a create method for user to Create his list
+14. Create a update method for user  to update list
+15. Create a delete method for user to delete his list
+16. Create a delete method for user to delete everything
