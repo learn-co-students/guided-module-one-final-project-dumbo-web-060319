@@ -1,7 +1,12 @@
-require "bundler/setup"
+require 'bundler/setup'
 require 'yaml'
 require 'active_record'
 require 'tty-prompt'
+require './models/user.rb'
+require './models/battle.rb'
+require './models/pokemon.rb'
+require './models/pokeball.rb'
+
 
 Bundler.require
 

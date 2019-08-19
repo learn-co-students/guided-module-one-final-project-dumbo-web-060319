@@ -10,7 +10,12 @@ class User < ActiveRecord::Base
 		if roll > 66
 			puts "Congratulations! You caught #{wild_pokemon.name}.".green
 			new_pokeball = self.add_pokeball(wild_pokemon.id)
-			add_pokeball_to_team(new_pokeball)
+			if self.team_size < 6 
+				# binding.pry
+				add_pokeball_to_team(new_pokeball)
+			else 
+				# binding.pry 
+			end
 		else
 			puts "#{wild_pokemon.name} got away.".red
 		end
@@ -25,12 +30,17 @@ class User < ActiveRecord::Base
     end
 
 	def team
-		pokeballs.where(on_team: true)
+		pokeballs.select { |pokemon| pokemon.on_team == true }
 	end
 
 	def not_on_team
-		pokeballs.where(on_team: false) && pokeballs.where(on_team: nil)
+		pokeballs.select { |pokemon| pokemon.on_team != true } 
 	end		
+
+	def consolidate_not_on_team
+		#method for use outside of cli
+		self.not_on_team.map { |pokemon| pokemon.on_team = false }
+	end 
 
 	def team_size
 		team.count
@@ -42,13 +52,19 @@ class User < ActiveRecord::Base
 			pokeball.save
 			"Adding #{pokeball.pokemon.name} to team..."
 		else
+			pokeball.on_team = false
 			"Team is full. Try removing a Pokemon!"
 		end
 	end
 
 	def remove_pokeball_from_team(pokeball)
-		pokeball.on_team = false
-		pokeball.save
+		if team_size == 1
+			puts "You only have 1 pokemon left!"
+		else 
+			pokeball.on_team = false
+			pokeball.save
+			"Removing #{pokeball.pokemon.name} from team..."
+		end
 	end
 
 	def remove_pokeball_from_collection(pokeball)

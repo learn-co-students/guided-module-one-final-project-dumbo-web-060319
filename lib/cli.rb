@@ -7,6 +7,8 @@ class CommandLineInterface
 
 	$prompt = TTY::Prompt.new 
 
+	# binding.pry
+
 	def initialize
 		prompt = TTY::Prompt.new
 		user_input = prompt.ask('What is your name?')
@@ -28,11 +30,11 @@ class CommandLineInterface
 		while user_selection != 99
 			user_selection = prompt.select('Please make a selection.') do |menu|
 				menu.choice 'Catch Pokemon', 5
-				menu.choice 'View Team', 1
 				menu.choice 'View Collection', 2
-				menu.choice 'View Record', 3
+				menu.choice 'View Team', 1
 				menu.choice 'Edit Team', 4
 				menu.choice 'Battle', 6
+				menu.choice 'View Record', 3
 				menu.choice 'Quit', 99
 			end
 			if user_selection == 1

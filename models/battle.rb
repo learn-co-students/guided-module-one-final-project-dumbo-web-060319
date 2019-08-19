@@ -9,8 +9,9 @@ class Battle < ActiveRecord::Base
 	def self.do_battle(user, opponent)
 		@user = user
 		@opponent = opponent
-		@user_team = Array.new(@user.pokeballs(1..6))
-		@opponent_team = Array.new(@opponent.pokeballs(1..6))
+		@user_team = @user.team
+		@opponent_team = @opponent.team
+		
 		until @user_team.length == 0 or @opponent_team.length == 0 do
 			@user_pokeball = @user_team[0]
 			@opponent_pokeball = @opponent_team[0]
@@ -65,19 +66,24 @@ class Battle < ActiveRecord::Base
 				when 0
 					puts "#{defender.pokemon.name} is immune to #{attacker.pokemon.element_type} attacks!"
 				when 0.5
-					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage..."
-					puts "It's not very effective.."
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage...".colorize :blue
+					puts "It's not very effective..".colorize :blue
 				when 1.0
 					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!"
 				when 2.0
-					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!"
-					puts "It's super effective!!!"
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!".colorize :green
+					puts "It's super effective!!!".colorize :green
 				end 
 				defender.hp -= damage
 			elsif attack_roll == "critical"
 				critical_hit = self.damage_critical(user_pokeball.pokemon, opponent_pokeball.pokemon)
-				puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!!".colorize :yellow
-				puts "Critical hit!!".colorize :yellow
+				if type_advantage == 2.0
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!!".colorize :light_red
+					puts "Critical hit!! And it's Super Effective!!!!".colorize :light_red
+				else 
+					puts "#{attacker.pokemon.name} hit #{defender.pokemon.name} for #{damage} damage!!!".colorize :yellow
+					puts "Critical hit!!".colorize :yellow
+				end
 				defender.hp -= critical_hit
 			end
 			attack_order = attack_order.reverse
@@ -96,12 +102,18 @@ class Battle < ActiveRecord::Base
 	end
 
 	def self.order_roll
-		roll = rand(0 .. 100)
-		if roll > 50
+		if @user_pokeball.pokemon.speed > @opponent_pokeball.pokemon.speed
 			[@user_pokeball, @opponent_pokeball]
-		else
+		else 
 			[@opponent_pokeball, @user_pokeball]
-		end
+		end 
+
+		# roll = rand(0 .. 100)
+		# if roll > 50
+		# 	[@user_pokeball, @opponent_pokeball]
+		# else
+		# 	[@opponent_pokeball, @user_pokeball]
+		# end
 	end
 
 	#Damage = ((((2 * Level / 5 + 2) * AttackStat * AttackPower / DefenseStat) / 50) + 2) 
@@ -131,7 +143,7 @@ class Battle < ActiveRecord::Base
 
 	def self.attack_accuracy
 		roll = rand(0 .. 100)
-		if roll < 30
+		if roll < 25
 			"miss"
 		elsif roll > 80
 			"critical"
@@ -190,7 +202,7 @@ class Battle < ActiveRecord::Base
 		Battle.dataframe[attacker.element_type.to_sym][defender.element_type.to_sym].to_f
 	end 
 
-	def self.dataframe 
+	def self.dataframe   
 	advantage_table = {
 
 		"Fire":	 %w"0.5	0.5	2	1	2	1	1	1	1	1	0.5	2	1	1	0.5",
@@ -206,7 +218,7 @@ class Battle < ActiveRecord::Base
 	    "Rock":	  %w"2	1	1	1	2	1	1	0.5	2	0.5	1	2	1	1	1",
 	    "Bug":	   %w"0.5	1	2	1	1	2	1	0.5	0.5	1	1	1	2	1	1",
 	    "Poison":	    %w"1	1	2	1	1	1	1	1	1	0.5	0.5	2	0.5	0.5	1",
-	    "Ghost":	 %w"1	1	1	1	1	0	0	1	1	1	1	1	1	2	1",
+	    "Ghost":	 %w"1	1	1	1	1	1	0	1	1	1	1	1	1	2	1",
 		"Dragon":	    %w" 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 1	 2"
 	}
 
