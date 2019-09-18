@@ -9,7 +9,12 @@ require 'tty-prompt'
 
 desc 'starts a console'
 task :console do
-	Pry.start
+	user1 = User.all.first
+	user2 = User.all.last 
+	battle1 = Battle.new(user_id: user1.id, opponent_id: user2.id, user: user1, opponent: user2)
+	# Pry.start
+	battle1.battle_state
+	binding.pry
 end
 
 desc 'runs CLI'

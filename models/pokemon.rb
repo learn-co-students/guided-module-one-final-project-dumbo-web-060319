@@ -29,7 +29,8 @@ class Pokemon < ActiveRecord::Base
         "Bug" => "light_green".to_sym,
         "Poison" => "magenta".to_sym,
         "Ghost" => "magenta".to_sym,	
-        "Dragon" => "cyan".to_sym
+        "Dragon" => "cyan".to_sym,
+        "Fairy" => "white".to_sym
     }
 
     end
